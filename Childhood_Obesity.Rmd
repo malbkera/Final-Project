@@ -1,0 +1,157 @@
+---
+title: "Childhood Obesity"
+author: "Maisaa Albkerat"
+date: "May 9, 2017"
+output: pdf_document
+---
+My area of interest is childhood obesity and acculturation among middle east population in the US. For my dissertation I will conduct secondary data analysis by using NHANES data to explore if there is association between acculturation and childhood obesity among middle east population, however for this project I will focus on Body mass index (BMI) and races, and try to see if there is any differences between cultures.
+
+**Childhood Obesity**
+\vspace{12pt}
+
+Childhood obesity is now considered one of the most serious public health problems. It is global problem, and is steadily affecting many low- and middle-income countries, particularly in urban areas (World Health Organization [WHO], 2015). According to Centers for Disease Control and Prevention (CDC), childhood obesity has more than doubled in children and quadrupled in adolescents in the past 30 years. In the United State, the percentage of obesity among children aged 6-11 increased from 7% in 1980 to nearly 18% in 2012, And from 5% to nearly 21% among adolescents aged 12–19 years. Also, In 2012, more than one third of children and adolescents were overweight or obese. According to WHO, Globally, in 2013, the estimation number of overweight children under age of five is above 42 million, around 31 million of these are living in developing countries. "Overweight is defined as a BMI at or above the 85th percentile and below the 95th percentile for children and teens of the same age and sex. Obesity is defined as a BMI at or above the 95th percentile for children and teens of the same age and sex" (CDC , 2015)
+
+According to the CDC, body mass index (BMI) is used to determine childhood overweight and obesity. "Overweight is defined as a BMI at or above the 85th percentile and below the 95th percentile for children and teens of the same age and sex. Obesity is defined as a BMI at or above the 95th percentile for children and teens of the same age and sex. BMI is calculated by dividing a person's weight in kilograms by the square of height in meters.  For children and teens, BMI is age and sex-specific and is often referred to as BMI-for-age".
+
+
+**Childhood Obesity and Acculturation**
+
+The 2010 American Community Survey (ACS) estimated the number of foreign born in the United States to be nearly 40 million, or 13 percent of the total population (Grieco et al., 2012). As immigrant population is continue to grow, it is very important to focus more on this population to know how obesity and overweight patterns differ from those of the native-born population (Singh, Kogan, & Yu, 2009). A study by Van Hook and Baker (2010) showed strong evidence that sons of immigrants who moved to the country as adults are at the greatest risk of obesity. in kindergarten they weigh more, and over time they gain more weight than sons of natives. Singh et al. (2009) examined the prevalence and socio behavioral correlates of obesity and overweight among 46,707 immigrant and US-born children and adolescents aged 10–17 years. They noticed the increase in obesity prevalence across all gender, race and socioeconomic groups. Other study by Baker, Rendall, and Weden (2015) showed that children of U.S.born mothers were less likely to be obese than similar children of foreign-born mothers; and the children of the least-acculturated immigrant mothers (measured by low English language proficiency) were the most likely to be obese.
+
+
+**National Health and Nutrition Examination Survey (NHANES)**
+
+the NHANES is a program of studies designed to assess the health and nutritional status of adults and children in the United States. The survey is unique in that it combines interviews and physical examinations. The NHANES interview includes demographic, socioeconomic, dietary, and health-related questions. The examination component consists of medical, dental, and physiological measurements, as well as laboratory tests administered by highly trained medical personnel. Findings from this survey can be used to determine the prevalence of major diseases and risk factors for diseases. also to assess nutritional status and its association with health promotion and disease prevention. 
+
+
+
+
+
+
+```{r data, include=FALSE}
+library(SASxport)
+library(Hmisc)
+BodyMeasures<-read.xport("BMX_H.xpt") #read body measure data which includes BMI
+Demographic<-read.xport("DEMO_H.xpt") #read demographic data which includes race and age
+Measures_Demographic<- merge(BodyMeasures, Demographic, by="SEQN") #merge body measures and demographic
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+## Body Mass Index (BMI) and Age
+
+```{r Children data, echo=FALSE}
+library(dplyr)
+library(plyr)
+Children<- filter(Measures_Demographic, RIDAGEYR<=19) #filter data to include children only
+#relationship between BMI and age
+
+```
+
+```{r BMI and Age, echo=FALSE, include=FALSE}
+reg <- lm(RIDAGEYR ~  BMXBMI, data = Children)
+reg
+summary(reg)
+```
+
+
+
+
+```{r plot BMI and Age, echo=FALSE, fig.width=8, fig.height=6}
+
+library(ggplot2)
+
+
+ggplot(data = Children, aes(x = RIDAGEYR, y = BMXBMI)) +
+  geom_point()+scale_y_log10() + geom_smooth(method="lm")+ xlab("Age") + ylab("BMI") +
+  ggtitle("Figure 1: BMI and Age")
+```
+
+Figure 1 shows that BMI has increaded by Age
+There is significant positive correlation between BMI and Age. BMI is increasing by age 
+R-squared= `r summary(reg)$r.squared`
+p-value= p-value: < 2.2e-16
+
+\vspace{20pt}
+
+```{r BMI and Race, echo=FALSE, fig.width=8, fig.height=6}
+ggplot(data = Children, aes(x = RIDRETH1 , y = BMXBMI, color= RIDRETH1 )) +
+  geom_point()+ xlab("Race: 1= Mexican American, 2= Other Hispanic, 
+                                  3 = Non-Hispanic White, 4= Non-Hispanic Black, 5= Other Race - Including Multi-Racial") + ylab("BMI") +
+  ggtitle("Figure 2: BMI and Race")
+```
+
+Figure 2 shows that Mexican American and Non-Hispanic Black have higher BMI than other races
+\vspace{20pt}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r BMI and Gender, echo=FALSE, fig.width=8, fig.height=6 }
+ggplot(data = Children, aes(x=RIAGENDR, y=BMXBMI, color = RIAGENDR)) +
+  geom_point()+ xlab("Gender: 1= Male, 2= Female") + ylab("BMI") +
+  ggtitle("Figure 3 :BMI and Gender")
+```
+
+Figure 3 shows that female gender has higher BMI than male
+
+
+
+**Conclusion**
+In this assignment I tried to explore NHANES data in relation to BMI as an indicator to obesity, for future work I hope that I can examin the relationship between childhood obesity and acculturation. in order to do this I need to merge acculturation data with body measures data from NHANES and then classify it to less accultured and more accultured and then try to find if acculturation has any influence on obesity.
+\vspace{20pt}
+
+
+
+
+
+
+**References**
+
+
+Baker, E. H., Rendall, M. S., & Weden, M. M. (2015). Epidemiological Paradox or Immigrant Vulnerability? Obesity Among Young Children of Immigrants. Demography, 52(4), 1295-1320. doi:10.1007/s13524-015-0404-3
+
+Centers for Disease Control and Prevention. (2015). Defining Childhood Obesity. Retrieved from http://www.cdc.gov/obesity/childhood/defining.html
+Grieco, E. M., Acosta, Y., D., Patricia de la Cruz, G., Gambino, C., Gryn, T., Larsen, L. J., ... Walters, N. P. (2012). The foreign-born population in the United States: 2010 American community survey reports. Retrieved from https://www.census.gov/prod/2012pubs/acs-19.pdf
+
+National Health and Nutrition Examination Survey. Retrieved from https://www.cdc.gov/nchs/nhanes/about_nhanes.htm
+
+Singh, G. K., Kogan, M. D., & Yu, S. M. (2009). Disparities in obesity and overweight prevalence among US immigrant children and adolescents by generational status. Journal Of Community Health, 34(4), 271-281. doi:10.1007/s10900-009-9148-6
+
+World Health Organization. (2015). Childhood overweight and obesity. Retrieved from http://www.who.int.uri.idm.oclc.org/dietphysicalactivity/childhood/en/
+
+Van Hook, J., & Baker, E. (2010). Big boys and little girls: gender, acculturation, and weight among young children of immigrants. Journal Of Health And Social Behavior, 51(2), 200-214
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
