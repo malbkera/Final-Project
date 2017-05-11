@@ -40,7 +40,7 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
 
 ## Body Mass Index (BMI) and Age
 
-```{r Children data, echo=FALSE}
+```{r Children data, include=FALSE}
 library(dplyr)
 library(plyr)
 Children<- filter(Measures_Demographic, RIDAGEYR<=19) #filter data to include children only
