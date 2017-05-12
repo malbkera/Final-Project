@@ -2,7 +2,9 @@
 title: "Childhood Obesity"
 author: "Maisaa Albkerat"
 date: "May 9, 2017"
-output: pdf_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 My area of interest is childhood obesity and acculturation among middle east population in the US. For my dissertation I will conduct secondary data analysis by using NHANES data to explore if there is association between acculturation and childhood obesity among middle east population, however for this project I will focus on Body mass index (BMI) and races, and try to see if there is any differences between cultures.
 
@@ -41,11 +43,13 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
 ## Body Mass Index (BMI) and Age
 
 ```{r Children data, include=FALSE}
-library(dplyr)
-library(plyr)
+library(plyr); library(dplyr)
 Children<- filter(Measures_Demographic, RIDAGEYR<=19) #filter data to include children only
 #relationship between BMI and age
-
+class(Children$RIDRETH1) # type of race variable is integer
+Children$RIDRETH1 <- factor(Children$RIDRETH1) # convert race to factor so I can use box plot , before converting it, the x axis was continues so I had errors
+class(Children$RIDRETH1)
+Children$RIAGENDR <- factor (Children$RIAGENDR) # convert gender to factor as well
 ```
 
 ```{r BMI and Age, echo=FALSE, include=FALSE}
@@ -74,14 +78,18 @@ p-value= p-value: < 2.2e-16
 
 \vspace{20pt}
 
+
+
 ```{r BMI and Race, echo=FALSE, fig.width=8, fig.height=6}
-ggplot(data = Children, aes(x = RIDRETH1 , y = BMXBMI, color= RIDRETH1 )) +
-  geom_point()+ xlab("Race: 1= Mexican American, 2= Other Hispanic, 
+
+ggplot(data = Children, aes(x = RIDRETH1 , y = BMXBMI, color = RIDRETH1 )) +
+  geom_boxplot(notch = TRUE)+ xlab("Race: 1= Mexican American, 2= Other Hispanic, 
                                   3 = Non-Hispanic White, 4= Non-Hispanic Black, 5= Other Race - Including Multi-Racial") + ylab("BMI") +
-  ggtitle("Figure 2: BMI and Race")
+  ggtitle("Figure 2: BMI and Race") 
+  
 ```
 
-Figure 2 shows that Mexican American and Non-Hispanic Black have higher BMI than other races
+Figure 2 shows that Mexican American has higher median of BMI than other races. on the other hand Non-Hispanic White has lower median of BMI than other races
 \vspace{20pt}
 
 
@@ -108,13 +116,24 @@ Figure 2 shows that Mexican American and Non-Hispanic Black have higher BMI than
 
 ```{r BMI and Gender, echo=FALSE, fig.width=8, fig.height=6 }
 ggplot(data = Children, aes(x=RIAGENDR, y=BMXBMI, color = RIAGENDR)) +
-  geom_point()+ xlab("Gender: 1= Male, 2= Female") + ylab("BMI") +
+  geom_boxplot(notch = TRUE)+ xlab("Gender: 1= Male, 2= Female") + ylab("BMI") +
   ggtitle("Figure 3 :BMI and Gender")
+
 ```
 
-Figure 3 shows that female gender has higher BMI than male
+Figure 3 shows that female gender has higher median of BMI than male
 
 
+
+```{r BMI Race/Gender, echo= FALSE}
+ggplot(data = Children, aes(x = RIDRETH1 , y = BMXBMI, color = RIAGENDR )) +
+  geom_boxplot(notch = TRUE)+ xlab("Race: 1= Mexican American, 2= Other Hispanic, 
+                                  3 = Non-Hispanic White, 4= Non-Hispanic Black, 5= Other Race - Including Multi-Racial") + ylab("BMI") +
+  ggtitle("Figure 4: BMI and Race/Gender") 
+
+```
+
+Figure 4 shows that for Non-Hispanic Black and other the median of BMI for female is more than male. For Mexican American, and other Hispanic, and non Hispanic white the median of BMI is the same. 
 
 **Conclusion**
 In this assignment I tried to explore NHANES data in relation to BMI as an indicator to obesity, for future work I hope that I can examin the relationship between childhood obesity and acculturation. in order to do this I need to merge acculturation data with body measures data from NHANES and then classify it to less accultured and more accultured and then try to find if acculturation has any influence on obesity.
